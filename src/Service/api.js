@@ -1,7 +1,7 @@
 import api from "../Config/axiosConfig";
 import axios from "axios"; 
 
-const BaseURL = "http://192.168.1.6:8080"; 
+const BaseURL = "https://sweetalk-backend.onrender.com"; 
 
 export const registerUser = async (data) => {
     try {

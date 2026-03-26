@@ -18,20 +18,20 @@ function App() {
   return (
     <Routes>
       <Route path="/" element={<LoginPage />} />
-      <Route path="/register" element={<RegisterPage/>} />
-      <Route path="/homepage" element={<HomePage/>} />
-      <Route path="/create" element={<Create/>} />
-      <Route path="/profile" element={<ProfilePage/>} />
-      <Route path="/editPage" element={<EditPage/>} />
+      <Route path="/register" element={<RegisterPage />} />
+      <Route path="/homepage" element={<HomePage />} />
+      <Route path="/create" element={<Create />} />
+      <Route path="/profile" element={<ProfilePage />} />
+      <Route path="/editPage" element={<EditPage />} />
       <Route path="/profile/:username" element={<ProfilePage />} />
-      <Route path="/search" element={<Search/>} />
-      <Route path="/message" element={<MessagesPage/>} />
+      <Route path="/search" element={<Search />} />
+      <Route path="/message" element={<MessagesPage />} />
       <Route path="/chatDetailPage/:receiver" element={<ChatDetailPage />} />
-<Route path="/profile/:userId/followers" element={<ConnectionPage />} />
-<Route path="/profile/:userId/following" element={<ConnectionPage />} />
-      <Route path="/notifications" element={<NotificationPage/>} />
+      <Route path="/profile/:userId/followers" element={<ConnectionPage />} />
+      <Route path="/profile/:userId/following" element={<ConnectionPage />} />
+      <Route path="/notifications" element={<NotificationPage />} />
     </Routes>
-  
+
   );
 }
 

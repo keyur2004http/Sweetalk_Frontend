@@ -49,13 +49,14 @@ const ProfilePage = () => {
     setDoesFollowMe(false);
 
     try {
-      const loggedInProfile = await getProfileById(Number(userId));
+      const loggedInProfile = await getProfileById(userId);
       const profileData = await getProfile(
         username || loggedInUsername,
         userId
       );
       setProfile(profileData);
-      setFollowers(await getFollowers(profileData.userId));
+      const follower=await getFollowers(profileData.userId);
+      setFollowers(follower);
       setFollowing(await getFollowing(profileData.userId));
       setMutualFriends(await getMutualFriends(userId,profileData.userId));
       if (loggedInProfile.userId === profileData.userId) {
@@ -63,7 +64,7 @@ const ProfilePage = () => {
         setFollowStatus("OWN");
         return;
       }
-
+     
       const myStatusToThem = await getFollowStatus(
         profileData.userId,
         loggedInProfile.userId
@@ -96,9 +97,11 @@ const ProfilePage = () => {
       }
 
     } catch (err) {
+       
       console.error("Profile fetch error:", err);
       setCanViewPosts(false);
     }
+    
   };
 
   const handleFollowToggle = async () => {

@@ -1,7 +1,7 @@
 import api from "../Config/axiosConfig";
 import axios from "axios"; 
 
-const BaseURL = "https://sweetalk-backend.onrender.com"; 
+const BaseURL = "http://localhost:8080"; 
 
 export const registerUser = async (data) => {
     try {
@@ -34,7 +34,7 @@ export const homepage = async (username) => {
 
 // Add to api.js
 export const getRandomSuggestions = async () => {
-    const res = await api.get(`/api/follow/suggestions/random`);
+    const res = await api.get(`api/follow/suggestions/random`);
     return res.data;
 };
 export const getProfile = async (username, loggedInUserId) => {
@@ -115,7 +115,7 @@ export const followBackUser = async (targetId, requesterId) => {
     return res.data;
 };
 export const cancelFollowRequest = async (followerId, userId) => {
-    await api.put(`${URL}/api/follow/request/${followerId}`, null, {
+    await api.put(`/api/follow/request/${followerId}`, null, {
         params: {
             accept: false,
             userId
@@ -135,14 +135,14 @@ export const getFollowStatus = async (targetUserId,requesterId) => {
 };
 
 export const canViewProfilePosts = async (followerId, followingId) => {
-    const res = await api.get(`${URL}/api/follow/isProfileVisible`, {
+    const res = await api.get(`/api/follow/isProfileVisible`, {
         params: { followerId, followingId }
     });
     return res.data;
 };
 
 export const isFollowBack = async (followerId, followingId) => {
-    const res = await api.get(`${URL}/api/follow/isFollowing`, {
+    const res = await api.get(`/api/follow/isFollowing`, {
         params: { 
             followerId: followerId, // Rohit's ID
             targetId: followingId   // The profile Rohit is visiting
@@ -152,7 +152,7 @@ export const isFollowBack = async (followerId, followingId) => {
 };
 
 export const toggleFollow = async (targetId, requesterId) => {
-    const res = await api.post(`${URL}/api/follow/${targetId}`, null, {
+    const res = await api.post(`/api/follow/${targetId}`, null, {
         params: { requesterId }
     });
     return res.data;
@@ -161,7 +161,7 @@ export const toggleFollow = async (targetId, requesterId) => {
 
 
 export const cancelFollowRequestProfile = async (profileId, userId) => {
-    const res = await api.delete(`${URL}/profile/cancel/${profileId}/${userId}`);
+    const res = await api.delete(`/profile/cancel/${profileId}/${userId}`);
     return res.data;
 };
 // Post
@@ -176,7 +176,7 @@ export const uploadPost = async (formData) => {
   return res.data;
 };
 export const deletePost = async (postId, username) => {
-    const res = await api.delete(`${URL}/api/post/deletePosts/${postId}`, {
+    const res = await api.delete(`/api/post/deletePosts/${postId}`, {
         params: { username }
     });
     return res.data;

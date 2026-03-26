@@ -17,7 +17,6 @@ function HomePage() {
         const userId = localStorage.getItem('userId');
         const [postRes, profileRes, suggestRes] = await Promise.all([
           homepage(username).catch(() => []),
-
           getProfileById(userId).catch(() => ({})),
           getRandomSuggestions().catch(() => [])
         ]);

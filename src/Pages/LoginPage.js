@@ -9,32 +9,44 @@ function LoginPage() {
 
   const navigate = useNavigate();
 
-const handleLogin = async (e) => {
-  e.preventDefault();
-  setErrors({ username: '', password: '', general: '' }); 
+ const handleLogin = async (e) => {
+    e.preventDefault();
 
-  if (!username.trim() || !password.trim()) {
-    setErrors({
-      username: !username.trim() ? "Username is required." : "",
-      password: !password.trim() ? "Password is required." : "",
-      general: ""
-    });
-    return;
-  }
+    const newErrors = { username: '', password: '', general: '' };
+    let hasError = false;
 
-  try {
-    const res = await loginUser({ username, password });
+    if (!username.trim()) {
+      newErrors.username = "Username is required.";
+      hasError = true;
+    }
 
-    localStorage.setItem("token", res.token);
-    localStorage.setItem("username", res.username);
-    localStorage.setItem("userId", res.userId);
+    if (!password.trim()) {
+      newErrors.password = "Password is required.";
+      hasError = true;
+    }
 
-    navigate("/homepage");
-  } catch (error) {
-    const msg = error.response?.data?.message || "Invalid username or password.";
-    setErrors(prev => ({ ...prev, general: msg }));
-  }
-};
+    if (hasError) {
+      setErrors(newErrors);
+      return;
+    }
+
+   try {
+  const res = await loginUser({ username, password });
+
+  localStorage.setItem("token", res.token);
+  localStorage.setItem("username", res.username);
+  localStorage.setItem("userId", res.userId);
+    console.log(res.token)
+  navigate("/homepage");
+} catch (error) {
+  setErrors({ ...newErrors, general: "Invalid username or password." });
+}
+  };
+
+  useEffect(() => {
+    setUsername('');
+    setPassword('');
+  }, []);
   useEffect(() => {
     setUsername('');
     setPassword('');

@@ -38,7 +38,7 @@ const ChatDetailPage = () => {
     chat.username.toLowerCase().includes(searchTerm.toLowerCase())
   );
   useEffect(() => {
-    const socket = new SockJS('http://192.168.1.15:8080/ws');
+    const socket = new SockJS('https://sweetalk-backend.onrender.com');
     const token = localStorage.getItem('token');
     stompClient = new Client({
       webSocketFactory: () => socket,

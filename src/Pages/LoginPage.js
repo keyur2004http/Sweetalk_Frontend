@@ -3,49 +3,38 @@ import { useNavigate, Link } from 'react-router-dom';
 import { loginUser } from '../Service/api';
 
 function LoginPage() {
-  
-
-
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState({ username: '', password: '', general: '' });
 
   const navigate = useNavigate();
 
-  const handleLogin = async (e) => {
-    e.preventDefault();
+const handleLogin = async (e) => {
+  e.preventDefault();
+  setErrors({ username: '', password: '', general: '' }); 
 
-    const newErrors = { username: '', password: '', general: '' };
-    let hasError = false;
+  if (!username.trim() || !password.trim()) {
+    setErrors({
+      username: !username.trim() ? "Username is required." : "",
+      password: !password.trim() ? "Password is required." : "",
+      general: ""
+    });
+    return;
+  }
 
-    if (!username.trim()) {
-      newErrors.username = "Username is required.";
-      hasError = true;
-    }
+  try {
+    const res = await loginUser({ username, password });
 
-    if (!password.trim()) {
-      newErrors.password = "Password is required.";
-      hasError = true;
-    }
+    localStorage.setItem("token", res.token);
+    localStorage.setItem("username", res.username);
+    localStorage.setItem("userId", res.userId);
 
-    if (hasError) {
-      setErrors(newErrors);
-      return;
-    }
-
-   try {
-  const res = await loginUser({ username, password });
-
-  localStorage.setItem("token", res.token);
-  localStorage.setItem("username", res.username);
-  localStorage.setItem("userId", res.userId);
-    console.log(res.token)
-  navigate("/homepage");
-} catch (error) {
-  setErrors({ ...newErrors, general: "Invalid username or password." });
-}
-  };
-
+    navigate("/homepage");
+  } catch (error) {
+    const msg = error.response?.data?.message || "Invalid username or password.";
+    setErrors(prev => ({ ...prev, general: msg }));
+  }
+};
   useEffect(() => {
     setUsername('');
     setPassword('');

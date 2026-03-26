@@ -29,9 +29,7 @@ export const registerUser = async (data) => {
 export const loginUser = async (data) => {
     try {
        nprogress.start();
-        const response = await axios.post(`${BaseURL}/auth/login`, data);
-       
-        localStorage.setItem("userId", response.data.userId);
+        const response = await axios.post(`${BaseURL}/auth/login`, data);       
         nprogress.done();
         return response.data;
     } catch (error) {

@@ -14,7 +14,21 @@ import Create from './Pages/Create';
 import MessagesPage from './Pages/MessagesPage';
 import ChatDetailPage from './Componets/ChatDetailPage';
 import ConnectionPage from './Pages/ConnectionPage';
+import nprogress from 'nprogress';
+
+
 function App() {
+  
+nprogress.configure({ 
+  showSpinner: false,     // Disable the spinning wheel
+  speed: 500,             // Animation speed in ms
+  minimum: 0.2,           // Minimum percentage to start at
+  trickleSpeed: 200,      // How often to trickle progress
+  easing: 'ease',         // CSS easing string
+});
+   nprogress.start();
+  nprogress.done();
+
   return (
     <Routes>
       <Route path="/" element={<LoginPage />} />

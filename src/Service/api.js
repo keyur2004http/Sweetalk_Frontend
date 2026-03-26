@@ -1,11 +1,24 @@
 import api from "../Config/axiosConfig";
 import axios from "axios"; 
+import nprogress from 'nprogress';
+import 'nprogress/nprogress.css';
+
+
+nprogress.configure({ 
+  showSpinner: false,     // Disable the spinning wheel
+  speed: 500,             // Animation speed in ms
+  minimum: 0.2,           // Minimum percentage to start at
+  trickleSpeed: 200,      // How often to trickle progress
+  easing: 'ease',         // CSS easing string
+});
+
 
 const BaseURL = "https://sweetalk-backend.onrender.com"; 
-
 export const registerUser = async (data) => {
     try {
+      nprogress.start();
         const response = await axios.post(`${BaseURL}/auth/register`, data);
+        nprogress.done();
         return response.data;
     } catch (error) {
         console.log("Register API Error:", error);
@@ -14,8 +27,11 @@ export const registerUser = async (data) => {
 }
 export const loginUser = async (data) => {
     try {
+       nprogress.start();
         const response = await axios.post(`${BaseURL}/auth/login`, data);
+       
         localStorage.setItem("userId", response.data.userId);
+        nprogress.done();
         return response.data;
     } catch (error) {
         console.log("Login API Error:", error);

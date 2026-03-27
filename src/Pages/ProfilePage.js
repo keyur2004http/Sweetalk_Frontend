@@ -47,66 +47,64 @@ const ProfilePage = () => {
     }
   }, [showPostList]);
 
-  const fetchProfileData = async () => {
-    setDoesFollowMe(false);
+const fetchProfileData = async () => {
+  try {
     setLoadingProfile(true);
-
     setLoadingPosts(true);
 
-    try {
-      const loggedInProfile = await getProfileById(Number(userId));
-      const profileData = await getProfile(
-        username || loggedInUsername,
-        userId
-      );
-      setProfile(profileData);
-      setFollowers(await getFollowers(profileData.userId));
-      setFollowing(await getFollowing(profileData.userId));
-      setMutualFriends(await getMutualFriends(userId, profileData.userId));
-      if (loggedInProfile.userId === profileData.userId) {
-        setCanViewPosts(true);
-        setFollowStatus("OWN");
-        return;
-      }
+    const [loggedInProfile, profileData] = await Promise.all([
+      getProfileById(Number(userId)),
+      getProfile(username || loggedInUsername, userId)
+    ]);
 
-      const myStatusToThem = await getFollowStatus(
-        profileData.userId,
-        loggedInProfile.userId
+    setProfile(profileData);
 
-      );
+    const [followersData, followingData, mutualFriendsData] = await Promise.all([
+      getFollowers(profileData.userId),
+      getFollowing(profileData.userId),
+      getMutualFriends(userId, profileData.userId)
+    ]);
+
+    setFollowers(followersData);
+    setFollowing(followingData);
+    setMutualFriends(mutualFriendsData);
+
+    if (loggedInProfile.userId === profileData.userId) {
+      setCanViewPosts(true);
+      setFollowStatus("OWN");
+    } else {
+
+      const [myStatusToThem, theirStatusToMe] = await Promise.all([
+        getFollowStatus(profileData.userId, loggedInProfile.userId),
+        getFollowStatus(loggedInProfile.userId, profileData.userId)
+      ]);
+
       setFollowStatus(myStatusToThem);
 
-      const theirStatusToMe = await getFollowStatus(
-        loggedInProfile.userId,
-        profileData.userId
-
+      setDoesFollowMe(
+        theirStatusToMe === "FOLLOWING" ||
+        theirStatusToMe === "ACCEPTED"
       );
-      setDoesFollowMe(theirStatusToMe === "FOLLOWING" || theirStatusToMe === "ACCEPTED");
+
       const isAccountPublic =
         profileData.isPublic === true ||
         profileData.public === true ||
         profileData.isPublic === 1;
 
-      if (isAccountPublic || myStatusToThem === "FOLLOWING" || myStatusToThem === "ACCEPTED") {
-        setCanViewPosts(true);
-      } else {
-        setCanViewPosts(false);
-      }
-      if (isAccountPublic) {
-        setCanViewPosts(true);
-      } else if (myStatusToThem === "FOLLOWING" || myStatusToThem === "ACCEPTED") {
-        setCanViewPosts(true);
-      } else {
-        setCanViewPosts(false);
-      }
-      setLoadingProfile(false);
-      setLoadingPosts(false);
-
-    } catch (err) {
-      console.error("Profile fetch error:", err);
-      setCanViewPosts(false);
+      setCanViewPosts(
+        isAccountPublic ||
+        myStatusToThem === "FOLLOWING" ||
+        myStatusToThem === "ACCEPTED"
+      );
     }
-  };
+
+  } catch (err) {
+    console.error("Profile fetch error:", err);
+  } finally {
+    setLoadingProfile(false);
+    setLoadingPosts(false);
+  }
+};
 
   const handleFollowToggle = async () => {
     const loggedInId = localStorage.getItem("userId");

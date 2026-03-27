@@ -13,7 +13,7 @@ nprogress.configure({
 });
 
 
-const BaseURL ="https://sweetalk-backend.onrender.com"; 
+const BaseURL ="http://localhost:8080"; 
 
 
 export const registerUser = async (data) => {

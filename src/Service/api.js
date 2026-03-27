@@ -5,15 +5,16 @@ import 'nprogress/nprogress.css';
 
 
 nprogress.configure({ 
-  showSpinner: false,     // Disable the spinning wheel
-  speed: 500,             // Animation speed in ms
-  minimum: 0.2,           // Minimum percentage to start at
-  trickleSpeed: 200,      // How often to trickle progress
-  easing: 'ease',         // CSS easing string
+  showSpinner: false,    
+  speed: 500,             
+  minimum: 0.2,
+  trickleSpeed: 200,      
+  easing: 'ease',
 });
 
 
 const BaseURL ="https://sweetalk-backend.onrender.com"; 
+
 
 export const registerUser = async (data) => {
     try {
@@ -30,10 +31,7 @@ export const loginUser = async (data) => {
   try {
     nprogress.start();
     const response = await axios.post(`${BaseURL}/auth/login`, data);
-
-    // FIX: Access the .data property where your Spring Boot fields live
     const userData = response.data; 
-
     localStorage.setItem("token", userData.token);
     localStorage.setItem("username", userData.username);
     localStorage.setItem("userId", userData.userId);

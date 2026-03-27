@@ -3,11 +3,11 @@ import nprogress from 'nprogress';
 import 'nprogress/nprogress.css';
 
 nprogress.configure({ 
-  showSpinner: false,     // Disable the spinning wheel
-  speed: 500,             // Animation speed in ms
-  minimum: 0.2,           // Minimum percentage to start at
-  trickleSpeed: 200,      // How often to trickle progress
-  easing: 'ease',         // CSS easing string
+  showSpinner: false,     
+  speed: 500,              
+  minimum: 0.2,            
+  trickleSpeed: 200,      
+  easing: 'ease',         
 });
 
 const api = axios.create({

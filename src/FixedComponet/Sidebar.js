@@ -34,7 +34,7 @@ const Sidebar = () => {
     { name: 'Create', path: '/create', icon: <PlusSquare /> },
     { 
       name: 'Profile', 
-      path: `/profile/${userId}`, 
+      path: `/profile/${username}`, 
       icon: profile?.profilePic ? (
         <img
           src={profile.profilePic}

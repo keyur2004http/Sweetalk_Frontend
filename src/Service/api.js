@@ -27,16 +27,26 @@ export const registerUser = async (data) => {
     }
 }
 export const loginUser = async (data) => {
-    try {
-       nprogress.start();
-        const response = await axios.post(`${BaseURL}/auth/login`, data);
-        localStorage.setItem("userId", response.data.userId);
-        nprogress.done();
-        return response.data;
-    } catch (error) {
-        console.log("Login API Error:", error);
-        throw error;
-    }
+  try {
+    nprogress.start();
+    const response = await axios.post(`${BaseURL}/auth/login`, data);
+
+    // FIX: Access the .data property where your Spring Boot fields live
+    const userData = response.data; 
+
+    localStorage.setItem("token", userData.token);
+    localStorage.setItem("username", userData.username);
+    localStorage.setItem("userId", userData.userId);
+
+    console.log("Saved to LocalStorage:", userData.username, userData.userId);
+
+    nprogress.done();
+    return userData; // Return the data directly
+  } catch (error) {
+    nprogress.done();
+    console.log("Login API Error:", error);
+    throw error;
+  }
 }
 export const homepage = async (username) => {
     try {

@@ -4,11 +4,15 @@ import Sidebar from '../FixedComponet/Sidebar';
 import { getRandomSuggestions, homepage, getProfileById } from '../Service/api';
 import SuggestionBar from '../Componets/Suggestionbar';
 import MobileTopbar from '../FixedComponet/MobileTopbar';
+import SuggestionSkeleton from '../Skelton/SuggestionSkeleton ';
+import PostListFeedSkeleton from '../Skelton/PostListFeedSkeleton';
 
 function HomePage() {
   
   const [suggestions, setSuggestions] = useState([]);
   const [miniSearch, setMiniSearch] = useState('');
+  const [loadingPosts, setLoadingPosts] = useState(true);
+const [loadingSuggestions, setLoadingSuggestions] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -42,22 +46,27 @@ function HomePage() {
 
 return (
   <div className="min-h-screen bg-gray-50">
-    <MobileTopbar />
-    <Sidebar />
-    <main className="pt-14 lg:pl-64 flex justify-center">
-      <div className="w-full max-w-[1200px] px-0 sm:px-6 py-4 flex gap-6">
-        
-        <section className="w-full max-w-2xl bg-white border-x min-h-screen pb-20">
-          <PostList />
-        </section>
+  <MobileTopbar />
+  <Sidebar />
 
-        <aside className="hidden lg:block w-[320px] shrink-0">
+  <main className="pt-14 lg:pl-64 flex justify-center">
+    <div className="w-full max-w-[1200px] px-0 sm:px-6 py-4 flex gap-6">
+
+      <section className="w-full max-w-2xl bg-white border-x min-h-screen pb-20">
+        {loadingPosts ? <PostListFeedSkeleton /> : <PostList />}
+      </section>
+
+      <aside className="hidden lg:block w-[320px] shrink-0">
+        {loadingSuggestions ? (
+          <SuggestionSkeleton />
+        ) : (
           <SuggestionBar initialSuggestions={suggestions} />
-        </aside>
+        )}
+      </aside>
 
-      </div>
-    </main>
-  </div>
+    </div>
+  </main>
+</div>
 );
 }
 export default HomePage;

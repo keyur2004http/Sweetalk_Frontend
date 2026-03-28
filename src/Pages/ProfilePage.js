@@ -13,6 +13,8 @@ import { ExclamationTriangleFill } from 'react-bootstrap-icons';
 import PostDetailModal from '../Componets/Ui/PostDetailModal';
 import PostList from '../Componets/PostList';
 import MobileTopbar from '../FixedComponet/MobileTopbar';
+import ProfileCardSkeleton from '../Skelton/ProfileCardSkeleton';
+import PostGridSkeleton from '../Skelton/PostGridSkeleton';
 
 const ProfilePage = () => {
   const [canViewPosts, setCanViewPosts] = useState(false);
@@ -47,64 +49,64 @@ const ProfilePage = () => {
     }
   }, [showPostList]);
 
-const fetchProfileData = async () => {
-  try {
-    setLoadingProfile(true);
-    setLoadingPosts(true);
+  const fetchProfileData = async () => {
+    try {
+      setLoadingProfile(true);
+      setLoadingPosts(true);
 
-    const [loggedInProfile, profileData] = await Promise.all([
-      getProfileById(Number(userId)),
-      getProfile(username || loggedInUsername, userId)
-    ]);
-
-    setProfile(profileData);
-
-    const [followersData, followingData, mutualFriendsData] = await Promise.all([
-      getFollowers(profileData.userId),
-      getFollowing(profileData.userId),
-      getMutualFriends(userId, profileData.userId)
-    ]);
-
-    setFollowers(followersData);
-    setFollowing(followingData);
-    setMutualFriends(mutualFriendsData);
-
-    if (loggedInProfile.userId === profileData.userId) {
-      setCanViewPosts(true);
-      setFollowStatus("OWN");
-    } else {
-
-      const [myStatusToThem, theirStatusToMe] = await Promise.all([
-        getFollowStatus(profileData.userId, loggedInProfile.userId),
-        getFollowStatus(loggedInProfile.userId, profileData.userId)
+      const [loggedInProfile, profileData] = await Promise.all([
+        getProfileById(Number(userId)),
+        getProfile(username || loggedInUsername, userId)
       ]);
 
-      setFollowStatus(myStatusToThem);
+      setProfile(profileData);
 
-      setDoesFollowMe(
-        theirStatusToMe === "FOLLOWING" ||
-        theirStatusToMe === "ACCEPTED"
-      );
+      const [followersData, followingData, mutualFriendsData] = await Promise.all([
+        getFollowers(profileData.userId),
+        getFollowing(profileData.userId),
+        getMutualFriends(userId, profileData.userId)
+      ]);
 
-      const isAccountPublic =
-        profileData.isPublic === true ||
-        profileData.public === true ||
-        profileData.isPublic === 1;
+      setFollowers(followersData);
+      setFollowing(followingData);
+      setMutualFriends(mutualFriendsData);
 
-      setCanViewPosts(
-        isAccountPublic ||
-        myStatusToThem === "FOLLOWING" ||
-        myStatusToThem === "ACCEPTED"
-      );
+      if (loggedInProfile.userId === profileData.userId) {
+        setCanViewPosts(true);
+        setFollowStatus("OWN");
+      } else {
+
+        const [myStatusToThem, theirStatusToMe] = await Promise.all([
+          getFollowStatus(profileData.userId, loggedInProfile.userId),
+          getFollowStatus(loggedInProfile.userId, profileData.userId)
+        ]);
+
+        setFollowStatus(myStatusToThem);
+
+        setDoesFollowMe(
+          theirStatusToMe === "FOLLOWING" ||
+          theirStatusToMe === "ACCEPTED"
+        );
+
+        const isAccountPublic =
+          profileData.isPublic === true ||
+          profileData.public === true ||
+          profileData.isPublic === 1;
+
+        setCanViewPosts(
+          isAccountPublic ||
+          myStatusToThem === "FOLLOWING" ||
+          myStatusToThem === "ACCEPTED"
+        );
+      }
+
+    } catch (err) {
+      console.error("Profile fetch error:", err);
+    } finally {
+      setLoadingProfile(false);
+      setLoadingPosts(false);
     }
-
-  } catch (err) {
-    console.error("Profile fetch error:", err);
-  } finally {
-    setLoadingProfile(false);
-    setLoadingPosts(false);
-  }
-};
+  };
 
   const handleFollowToggle = async () => {
     const loggedInId = localStorage.getItem("userId");
@@ -153,36 +155,33 @@ const fetchProfileData = async () => {
       <main className="lg:ml-64 flex justify-center w-full">
         <div className="flex-1 w-full px-3 sm:px-6 lg:px-10 pt-10 pb-24 lg:pb-10 max-w-6xl mx-auto">
           <div className="bg-white rounded-3xl shadow-sm mb-6">
-            <ProfileCard
-              profile={profile}
-              isOwnProfile={username === loggedInUsername || !username}
-              followStatus={followStatus}
-              doesFollowMe={doesFollowMe}
-              handleFollowToggle={handleFollowToggle}
-              followersCount={followers.length}
-              followingCount={following.length}
-              postsCount={profile?.posts?.length || 0}
-              mutualFriends={mutualFriends}
-            />
+            {loadingProfile ? (
+              <ProfileCardSkeleton />
+            ) : (
+              <ProfileCard
+                profile={profile}
+                isOwnProfile={username === loggedInUsername || !username}
+                followStatus={followStatus}
+                doesFollowMe={doesFollowMe}
+                handleFollowToggle={handleFollowToggle}
+                followersCount={followers.length}
+                followingCount={following.length}
+                postsCount={profile?.posts?.length || 0}
+                mutualFriends={mutualFriends}
+              />
+            )}
           </div>
           {loadingProfile ? (
+            <PostGridSkeleton></PostGridSkeleton>
 
-  /* LOADING STATE */
-  <div className="flex justify-center items-center py-20">
-    <p className="text-gray-400">Loading profile...</p>
-  </div>
-
-) : canViewPosts ? (
+          ) : canViewPosts ? (
 
             <div className="bg-white sm:rounded-3xl sm:shadow-sm sm:p-6 min-h-[300px] flex flex-col">
               <h4 className="hidden sm:block text-lg font-bold mb-4">Posts</h4>
 
               {loadingPosts ? (
 
-                /* LOADING STATE */
-                <div className="flex justify-center items-center py-20">
-                  <p className="text-gray-400">Loading posts...</p>
-                </div>
+                <PostGridSkeleton></PostGridSkeleton>
 
               ) : profile.posts && profile.posts.length > 0 ? (
 

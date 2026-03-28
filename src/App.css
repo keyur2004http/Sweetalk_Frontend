@@ -27,6 +27,10 @@
 .App-link {
   color: #61dafb;
 }
+#nprogress .bar {
+  /* Tailwind pink-500 */
+  height: 5px !important;         /* Make it thicker or thinner */
+}
 
 @keyframes App-logo-spin {
   from {

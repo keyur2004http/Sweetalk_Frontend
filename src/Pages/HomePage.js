@@ -19,16 +19,22 @@ const [loadingSuggestions, setLoadingSuggestions] = useState(true);
       try {
         const username = localStorage.getItem('username');
         const userId = localStorage.getItem('userId');
-        const [postRes, profileRes, suggestRes] = await Promise.all([
-          homepage(username).catch(() => []),
 
+        const [postRes, profileRes, suggestRes] = await Promise.all([
+        homepage(username).catch(() => []),
+          
           getProfileById(userId).catch(() => ({})),
           getRandomSuggestions().catch(() => [])
         ]);
         setSuggestions(suggestRes);
+        setLoadingPosts(true);
+        setLoadingSuggestions(true)
       } catch (error) {
         console.error('Error loading data:', error);
-      }
+      }finally{
+         setLoadingPosts(false);
+        setLoadingSuggestions(false)
+    }
     };
     fetchData();
   }, []);

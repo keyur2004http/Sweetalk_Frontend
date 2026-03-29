@@ -7,6 +7,7 @@ import Sidebar from '../FixedComponet/Sidebar';
 import { SendFill, CircleFill } from 'react-bootstrap-icons';
 import { Search } from 'react-bootstrap-icons';
 import { useNavigate } from 'react-router-dom';
+import MessageSkeleton from '../Skelton/MessageSkeleton';
 
 
 let stompClient = null;
@@ -14,8 +15,9 @@ let stompClient = null;
 const ChatDetailPage = () => {
   const [message, setMessage] = useState('');
   const [chat, setChat] = useState([]);
+  const [loadingMessages, setLoadingMessages] = useState(true);
   const [error, setError] = useState(null);
-  const scrollRef = useRef(null); 
+  const scrollRef = useRef(null);
   const currentUser = localStorage.getItem("username");
   const { receiver } = useParams();
   const [recentChats, setRecentChats] = useState([]);
@@ -62,6 +64,7 @@ const ChatDetailPage = () => {
           });
           if (received.sender === receiver || received.sender === currentUser) {
             setChat((prev) => [...prev, received]);
+            setLoadingMessages(false);
           }
         });
         setError(null);
@@ -108,9 +111,9 @@ const ChatDetailPage = () => {
   };
   return (
     <div className="flex h-screen bg-gray-50 overflow-hidden">
-     <div className="hidden lg:block">
- < Sidebar/>
-</div>
+      <div className="hidden lg:block">
+        < Sidebar />
+      </div>
 
       <main className="flex-1 flex flex-col lg:ml-64 bg-white border-r border-gray-100 relative">
         <header className="p-4 border-b border-gray-100 flex items-center justify-between bg-white/80 backdrop-blur-md sticky top-0 z-10">
@@ -133,23 +136,27 @@ const ChatDetailPage = () => {
         </header>
 
         <div
-  ref={scrollRef}
-  className="flex-1 overflow-y-auto p-6 space-y-4 bg-[#f0f2f5] scroll-smooth pb-24"
->
+          ref={scrollRef}
+          className="flex-1 overflow-y-auto p-6 space-y-4 bg-[#f0f2f5] scroll-smooth pb-24"
+        >
 
-          {chat.map((msg, idx) => {
-            const isMe = msg.sender === currentUser;
-            return (
-              <div key={idx} className={`flex ${isMe ? 'justify-end' : 'justify-start'} animate-fade-in`}>
-                <div className={`max-w-[75%] px-4 py-2 rounded-2xl shadow-sm text-sm ${isMe
-                  ? 'bg-blue-600 text-white rounded-tr-none'
-                  : 'bg-white text-gray-800 rounded-tl-none border border-gray-200'
-                  }`}>
-                  <p className="leading-relaxed">{msg.content}</p>
+          {loadingMessages ? (
+            <MessageSkeleton />
+          ) : (
+            chat.map((msg, idx) => {
+              const isMe = msg.sender === currentUser;
+              return (
+                <div key={idx} className={`flex ${isMe ? 'justify-end' : 'justify-start'} animate-fade-in`}>
+                  <div className={`max-w-[75%] px-4 py-2 rounded-2xl shadow-sm text-sm ${isMe
+                      ? 'bg-blue-600 text-white rounded-tr-none'
+                      : 'bg-white text-gray-800 rounded-tl-none border border-gray-200'
+                    }`}>
+                    <p className="leading-relaxed">{msg.content}</p>
+                  </div>
                 </div>
-              </div>
-            );
-          })}
+              );
+            })
+          )}
         </div>
 
         <footer className="fixed bottom-0 left-0 lg:left-64 right-0 bg-white border-t border-gray-100 p-4 z-20">

@@ -2,55 +2,41 @@ import React, { useState, useEffect } from 'react';
 import PostCard from './Ui/PostCard';
 import { homepage } from '../Service/api';
 
-const PostList = ({ posts: externalPosts,startPostId }) => {
-  const [posts, setPosts] = useState(externalPosts || []);
+const PostList = ({ posts = [], startPostId }) => {
+  const [sortedPosts, setSortedPosts] = useState(posts);
 
   useEffect(() => {
-    if (externalPosts) {
-      if (startPostId) {
-        const sorted = [...externalPosts].sort((a, b) =>
-          a.postId === startPostId ? -1 : b.postId === startPostId ? 1 : 0
-        );
-        setPosts(sorted);
-      } else {
-        setPosts(externalPosts);
-      }
-      
-      return;
+    if (startPostId) {
+      const sorted = [...posts].sort((a, b) =>
+        a.postId === startPostId ? -1 : b.postId === startPostId ? 1 : 0
+      );
+      setSortedPosts(sorted);
+    } else {
+      setSortedPosts(posts);
     }
-  const fetchPosts = async () => {
-    try {
-      const username = localStorage.getItem('username');
-      const data = await homepage(username);
-      setPosts(Array.isArray(data) ? data : []);
-    } catch (error) {
-      console.error('Error fetching feed:', error);
-    } finally {
-    }
-  };
-  fetchPosts();
-}, [externalPosts, startPostId]);
-const handleRemovePost = (postId) => {
-  setPosts(prev => prev.filter(p => p.postId !== postId));
-};
+  }, [posts, startPostId]);
 
-return (
-  <div className="flex flex-col w-full max-w-[500px] mx-auto py-6 px-2 lg:px-0">
-    {posts.length > 0 ? (
-      posts.map(post => (
-        <PostCard
-          key={post.postId}
-          post={post}
-          isDetailedView={false}
-          onDeleteSuccess={() => handleRemovePost(post.postId)}
-        />
-      ))
-    ) : (
-      <div className="text-center py-20 text-gray-400">
-        No posts yet
-      </div>
-    )}
-  </div>
-);
+  const handleRemovePost = (postId) => {
+    setSortedPosts(prev => prev.filter(p => p.postId !== postId));
+  };
+
+  return (
+    <div className="flex flex-col w-full max-w-[500px] mx-auto py-6 px-2 lg:px-0">
+      {sortedPosts.length > 0 ? (
+        sortedPosts.map(post => (
+          <PostCard
+            key={post.postId}
+            post={post}
+            isDetailedView={false}
+            onDeleteSuccess={() => handleRemovePost(post.postId)}
+          />
+        ))
+      ) : (
+        <div className="text-center py-20 text-gray-400">
+          No posts yet
+        </div>
+      )}
+    </div>
+  );
 };
 export default PostList;

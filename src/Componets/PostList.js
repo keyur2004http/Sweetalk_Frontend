@@ -4,7 +4,6 @@ import { homepage } from '../Service/api';
 
 const PostList = ({ posts: externalPosts,startPostId }) => {
   const [posts, setPosts] = useState(externalPosts || []);
-  const [loading, setLoading] = useState(!externalPosts);
 
   useEffect(() => {
     if (externalPosts) {
@@ -21,14 +20,12 @@ const PostList = ({ posts: externalPosts,startPostId }) => {
     }
   const fetchPosts = async () => {
     try {
-      setLoading(true);
       const username = localStorage.getItem('username');
       const data = await homepage(username);
       setPosts(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error('Error fetching feed:', error);
     } finally {
-      setLoading(false);
     }
   };
   fetchPosts();
@@ -36,13 +33,7 @@ const PostList = ({ posts: externalPosts,startPostId }) => {
 const handleRemovePost = (postId) => {
   setPosts(prev => prev.filter(p => p.postId !== postId));
 };
-if (loading) {
-  return (
-    <div className="flex justify-center py-20">
-      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
-    </div>
-  );
-}
+
 return (
   <div className="flex flex-col w-full max-w-[500px] mx-auto py-6 px-2 lg:px-0">
     {posts.length > 0 ? (

@@ -11,7 +11,7 @@ nprogress.configure({
 });
 
 const api = axios.create({
-    baseURL:'https://sweetalk-backend.onrender.com'
+    baseURL:'http://localhost:8080'
 });
 
 api.interceptors.request.use(

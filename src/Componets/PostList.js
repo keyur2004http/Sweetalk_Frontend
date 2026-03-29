@@ -15,7 +15,7 @@ const PostList = ({ posts: externalPosts,startPostId }) => {
       } else {
         setPosts(externalPosts);
       }
-      setLoading(false);
+      
       return;
     }
   const fetchPosts = async () => {
